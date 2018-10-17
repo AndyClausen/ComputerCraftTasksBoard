@@ -12,6 +12,11 @@ local completedTasks = {} -- Lua is still a bitch
 local activeTaskActions = {} -- Why is Lua such a cunt
 local completedTaskActions = {}
 
+local menuItemColors = {
+    Delete = colors.red,
+    Default = colors.white,
+}
+
 -- Display tasks on the big screen for everyone to see
 function displayTasksOnMonitor()
     monitor.clear()
@@ -198,7 +203,9 @@ function drawMenu()
     -- Draw items
     for k,item in pairs(menuItems or {}) do
         term.setCursorPos(4, curY)
+        term.setTextColor(menuItemColors[item.title] or menuItemColors.Default)
         print(item.title)
+        term.setTextColor(menuItemColors.Default)
         curY = curY+1
     end
 end
