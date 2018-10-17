@@ -1,6 +1,6 @@
 shell.run("clear")
 local isRunning = true
-local versionString = "v0.0.1 ALPHA"
+local versionString = "v0.1.0 Beta"
 local nTime = os.time()
 local nDay = os.day()
 local monitor = peripheral.wrap("top")
@@ -34,9 +34,9 @@ function displayTasksOnMonitor()
         monitor.write("|")
     end
     monitor.setCursorPos(7,1)
-	term.setTextColor(colors.lime)
+	monitor.setTextColor(colors.lime)
     monitor.write("Active tasks")
-	term.setTextColor(menuItemColors.Default)
+	monitor.setTextColor(menuItemColors.Default)
     for k,v in pairs(activeTasks) do
         if v.title ~= "Back" then
             monitor.setCursorPos(12-math.floor(string.len(v.title)/2),2+k)
@@ -44,9 +44,9 @@ function displayTasksOnMonitor()
         end
     end
     monitor.setCursorPos(28, 1)
-	term.setTextColor(colors.lime)
-	term.setTextColor(menuItemColors.Default)
+	monitor.setTextColor(colors.lime)
     monitor.write("Other info")
+	monitor.setTextColor(menuItemColors.Default)
     monitor.setCursorPos(27,3)
     monitor.write("Active:")
     monitor.setCursorPos(40-string.len(table.getn(activeTasks)-1),3)
@@ -182,6 +182,36 @@ end
 table.insert(activeTasks, goBackMenuItem)
 table.insert(completedTasks, goBackMenuItem)
 
+-- Because it's annoying to do yourself every time
+function updateProgram()
+    -- clear screen first
+    switchMenuItem()
+    shell.run("clear")
+    drawMenu()
+    
+    -- draw some sexy text and wait for input
+    term.setCursorPos(2, 6)
+    print("Pastebin code: ")
+    term.setCursorPos(17, 6)
+    local code = read() -- this is the input
+    
+    -- fuck off if it's empty
+    if not code or code == "" or code == " " then
+        goBack()
+    else
+        shell.run("clear")
+        drawMenu()
+        term.setCursorPos(2, 6)
+        print("Updating, please wait...")
+        term.setCursorPos(2, 7)
+        isRunning=false
+        shell.run("rm tasks")
+        shell.run("pastebin get "..code.." tasks")
+        shell.run("tasks")
+    end
+end
+
+-- Literally just ragequit
 function exit()
     isRunning = false
 end
@@ -190,7 +220,8 @@ end
 local menu = { title="Main Menu", action=nil, children={
     {title="New task", action=createTask, children=nil},
     {title="Active tasks", action=switchMenuItem, children=activeTasks},
-    {title="Completed tasks", action=switchMenuItem, children=completedTasks}
+    {title="Completed tasks", action=switchMenuItem, children=completedTasks},
+    {title="Update program", action=updateProgram, children=nil},
     {title="Exit", action=exit, children=nil}
 }}
 menuStack = {menu} -- Basically just a history tho
@@ -198,7 +229,9 @@ menuStack = {menu} -- Basically just a history tho
 -- Draw the current menu from the menu stack
 function drawMenu()
     term.setCursorPos(1, 1)
+    term.setTextColor(colors.magenta)
     print("Taskboard "..versionString)
+    term.setTextColor(menuItemColors.Default)
     
     if menuStack[table.getn(menuStack)].title then
         term.setCursorPos(1, 4)
