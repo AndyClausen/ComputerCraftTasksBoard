@@ -20,7 +20,7 @@ local menuItemColors = {
 	Reactivate = colors.yellow,
 	Back = colors.lightGray,
 	Exit = colors.red,
-	"Update program" = colors.cyan,
+	["Update program"] = colors.cyan,
 }
 
 -- Display tasks on the big screen for everyone to see
