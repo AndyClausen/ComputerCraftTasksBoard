@@ -1,6 +1,6 @@
 shell.run("clear")
 local isRunning = true
-local versionString = "v0.1.0 Beta"
+local versionString = "v0.1.1 Beta"
 local nTime = os.time()
 local nDay = os.day()
 local monitor = peripheral.wrap("top")
@@ -18,6 +18,7 @@ local menuItemColors = {
     Delete = colors.red,
 	Complete = colors.green,
 	Reactivate = colors.yellow,
+    ["Edit name"] = colors.yellow,
 	Back = colors.lightGray,
 	Exit = colors.red,
 	["Update program"] = colors.cyan,
@@ -106,6 +107,31 @@ function reactivateTask()
     save()
 end
 
+-- Edit a task and go back
+function editTask()
+    -- clear screen first
+    local t = selectedTask
+    switchMenuItem()
+    shell.run("clear")
+    drawMenu()
+    
+    -- draw some sexy text and wait for input
+    term.setCursorPos(2, 6)
+    print("New task name: ")
+    term.setCursorPos(17, 6)
+    
+    local name = read() -- this is the input
+    -- fuck off if it's empty
+    if not name or name == "" or name == " " then
+        goBack()
+    else
+        -- otherwise edit task and then fuck off
+        activeTasks[t].title = name
+        goBack() -- this is where we fuck off and pray it works
+        save()
+    end
+end
+
 -- Delete a task and go back
 function deleteTask(t)
     table.remove(t, selectedTask)
@@ -117,7 +143,6 @@ end
 function deleteTaskFromActive()
     deleteTask(activeTasks)
 end
-
 function deleteTaskFromCompleted()
     deleteTask(completedTasks)
 end
@@ -155,6 +180,7 @@ end
 local goBackMenuItem = stringToTaskItem("Back", goBack)
 activeTaskActions = {
     {title="Complete", action=completeTask, children=nil},
+    {title="Edit name", action=editTask, children=nil},
     {title="Delete", action=deleteTaskFromActive, children=nil},
     goBackMenuItem
 }
@@ -215,6 +241,7 @@ end
 -- Literally just ragequit
 function exit()
     isRunning = false
+    shell.run("clear")
 end
 
 -- Menus
@@ -280,11 +307,9 @@ function readKey()
 end
 
 -- Run the program
-displayTasksOnMonitor()
+displayTasksOnMonitor() -- External monitor @ 4x2 blocks
 while isRunning do
     shell.run("clear")
     drawMenu()
     readKey()
 end
-
---shell.run("clear")
