@@ -1,4 +1,5 @@
 shell.run("clear")
+local isRunning = true
 local versionString = "v0.0.1 ALPHA"
 local nTime = os.time()
 local nDay = os.day()
@@ -181,11 +182,16 @@ end
 table.insert(activeTasks, goBackMenuItem)
 table.insert(completedTasks, goBackMenuItem)
 
+function exit()
+    isRunning = false
+end
+
 -- Menus
 local menu = { title="Main Menu", action=nil, children={
-    {title="Active tasks", action=switchMenuItem, children=activeTasks},
     {title="New task", action=createTask, children=nil},
-    {title="Completed tasks", action=switchMenuItem, children = completedTasks}
+    {title="Active tasks", action=switchMenuItem, children=activeTasks},
+    {title="Completed tasks", action=switchMenuItem, children=completedTasks}
+    {title="Exit", action=exit, children=nil}
 }}
 menuStack = {menu} -- Basically just a history tho
 
@@ -241,7 +247,7 @@ end
 
 -- Run the program
 displayTasksOnMonitor()
-while true do
+while isRunning do
     shell.run("clear")
     drawMenu()
     readKey()
