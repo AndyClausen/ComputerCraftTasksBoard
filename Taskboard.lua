@@ -18,6 +18,7 @@ local menuItemColors = {
 	Complete = colors.green,
 	Reactivate = colors.yellow,
 	Back = colors.lightGray,
+	Exit = colors.red,
 }
 
 -- Display tasks on the big screen for everyone to see
@@ -32,7 +33,9 @@ function displayTasksOnMonitor()
         monitor.write("|")
     end
     monitor.setCursorPos(7,1)
+	term.setTextColor(colors.lime)
     monitor.write("Active tasks")
+	term.setTextColor(menuItemColors.Default)
     for k,v in pairs(activeTasks) do
         if v.title ~= "Back" then
             monitor.setCursorPos(12-math.floor(string.len(v.title)/2),2+k)
@@ -40,6 +43,8 @@ function displayTasksOnMonitor()
         end
     end
     monitor.setCursorPos(28, 1)
+	term.setTextColor(colors.lime)
+	term.setTextColor(menuItemColors.Default)
     monitor.write("Other info")
     monitor.setCursorPos(27,3)
     monitor.write("Active:")
