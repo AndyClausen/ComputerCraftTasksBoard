@@ -13,8 +13,11 @@ local activeTaskActions = {} -- Why is Lua such a cunt
 local completedTaskActions = {}
 
 local menuItemColors = {
-    Delete = colors.red,
     Default = colors.white,
+    Delete = colors.red,
+	Complete = colors.green,
+	Reactivate = colors.yellow,
+	Back = colors.lightGray,
 }
 
 -- Display tasks on the big screen for everyone to see
@@ -197,7 +200,9 @@ function drawMenu()
     -- Set arrow (>)
     if menuItems and table.getn(menuItems) then
         term.setCursorPos(2, curY + currentItem-1)
+		term.setTextColor(colors.magenta)
         print(">")
+		term.setTextColor(colors.default)
     end
     
     -- Draw items
