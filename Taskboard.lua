@@ -202,7 +202,7 @@ function drawMenu()
         term.setCursorPos(2, curY + currentItem-1)
 		term.setTextColor(colors.magenta)
         print(">")
-		term.setTextColor(colors.default)
+		term.setTextColor(menuItemColors.Default)
     end
     
     -- Draw items
