@@ -26,6 +26,7 @@ local menuItemColors = {
 
 -- Display tasks on the big screen for everyone to see
 function displayTasksOnMonitor()
+    local overflow = 0
     monitor.clear()
     for i=1,39 do
         monitor.setCursorPos(i,2)
@@ -41,8 +42,16 @@ function displayTasksOnMonitor()
 	monitor.setTextColor(menuItemColors.Default)
     for k,v in pairs(activeTasks) do
         if v.title ~= "Back" then
-            monitor.setCursorPos(12-math.floor(string.len(v.title)/2),2+k)
-            monitor.write(v.title)
+            local s = v.title
+            if string.len(s) > 24 then
+                s1 = string.sub(s, 1, 24)
+                s = string.sub(s, 25, string.len(s))
+                monitor.setCursorPos(math.floor(1),2+k+overflow)
+                monitor.write(s1)
+                overflow = overflow+1
+            end
+            monitor.setCursorPos(math.floor(13-string.len(s)/2),2+k+overflow)
+            monitor.write(s)
         end
     end
     monitor.setCursorPos(28, 1)
